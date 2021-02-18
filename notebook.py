@@ -1,0 +1,65 @@
+import datetime
+
+# Store the next avaialble id for all new notes
+
+last_id = 0
+
+class Note:
+    '''Represent a note in the notebook. Match against a
+    string in the searched and store tags for each note.'''
+
+    def __init__(self,memo,tags = ''):
+        'Initializing note with memo and options tags'
+        self.memo = memo
+        self.tags = tags
+        self.creation_date = datetime.date.today()
+        global last_id
+        last_id += 1
+        self.id = last_id
+
+    def match(self,filter):
+        '''Determine if note matches filter text. True if
+        it matches else false. Case sensitive search'''
+        return filter in self.memo or filter in self.tags
+
+class Notebook:
+    """Represent a collection of notes that can be tagged,
+    modified, and searched"""
+    def __init__(self):
+        '''Initializing notebook with empty list'''
+        self.notes = []
+
+    def new_note(self,memo,tags = ""):
+        '''Create a note and addit to the list'''
+        self.notes.append(Note(memo,tags))
+
+    def _find_note(self,note_id):
+        '''Locate the note with the given id'''
+        for note in self.notes:
+            if str(note.id) == str(note_id):
+                return note
+        return None
+
+    def modify_memo(self,note_id,memo):
+        '''Find the note with given id and change its memo
+        to the given value'''
+        note = self._find_note(note_id)
+        if note:
+            note.memo = memo
+            return True
+        return False
+    
+    def modify_tags(self,note_id,tags):
+        '''Find note with given id and change tags to
+        given value'''
+        note = self._find_note(note_id)
+        if note:
+            note.tags = tags
+            return True
+        return False
+
+    
+    def search(self,filter):
+        '''Find all notes that match the given filter'''
+        return [note for note in self.notes if note.match(filter)]
+    
